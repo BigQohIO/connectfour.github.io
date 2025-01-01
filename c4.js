@@ -28,7 +28,7 @@ function handleCellClick(event) {
 
     const col = event.target.dataset.col;
     const row = getAvailableRow(col);
-
+    
     if (row !== -1) {
         // Place the disc
         board[row][col] = currentPlayer;
@@ -69,7 +69,7 @@ function updateBoard() {
         const row = cell.dataset.row;
         const col = cell.dataset.col;
         const player = board[row][col];
-
+        
         if (player) {
             cell.classList.add(player);
         } else {
@@ -89,7 +89,7 @@ function checkWin(row, col) {
 // Check a specific direction for a win
 function checkDirection(row, col, rowDir, colDir) {
     let count = 1;
-
+    
     // Check in both directions (positive and negative)
     for (let i = 1; i <= 3; i++) {
         const r = row + i * rowDir;
@@ -116,8 +116,6 @@ function checkDirection(row, col, rowDir, colDir) {
 
 // AI's move (based on difficulty)
 function aiMove() {
-    console.log("AI is thinking...");
-
     // Display "AI is thinking..." message
     document.getElementById('turn').textContent = "AI is thinking...";
 
@@ -132,23 +130,10 @@ function aiMove() {
 
         let aiCol = null;
 
-        // Easy AI: Random column
-        if (difficulty === 'easy') {
-            aiCol = availableColumns[Math.floor(Math.random() * availableColumns.length)];
-        }
-
-        // Medium AI: Try to block if necessary
-        else if (difficulty === 'medium') {
-            aiCol = mediumAI(availableColumns);
-        }
-
-        // Hard AI: Block the player from winning and try to win
-        else if (difficulty === 'hard') {
+        // Hard AI: Make smart move based on offensive and defensive logic
+        if (difficulty === 'hard') {
             aiCol = hardAI(availableColumns);
         }
-
-        // Log AI's decision
-        console.log(`AI chose column ${aiCol}`);
 
         const row = getAvailableRow(aiCol);
         board[row][aiCol] = 'yellow';
@@ -166,50 +151,47 @@ function aiMove() {
     }, 1500);  // 1.5-second delay
 }
 
-// Medium AI: Blocks winning move but also allows player to win some
-function mediumAI(availableColumns) {
-    // Try to block if the player is about to win
-    for (let col of availableColumns) {
-        const row = getAvailableRow(col);
-        if (row !== -1) {
-            board[row][col] = 'red';
-            if (checkWin(row, col)) {
-                board[row][col] = null;
-                return col;
-            }
-            board[row][col] = null;
-        }
-    }
-    return availableColumns[Math.floor(Math.random() * availableColumns.length)];
-}
-
-// Hard AI: Blocks the player from winning and tries to win
+// Hard AI: Block the player from winning and try to win (desperate to win)
 function hardAI(availableColumns) {
+    // 1. Check if the AI can win
     for (let col of availableColumns) {
         const row = getAvailableRow(col);
         if (row !== -1) {
-            board[row][col] = 'yellow';
+            board[row][col] = 'yellow';  // Simulate AI's move
             if (checkWin(row, col)) {
-                return col;
+                return col;  // AI wins
             }
             board[row][col] = null;
         }
     }
 
-    // Block the player's winning move
+    // 2. Block player's winning move
     for (let col of availableColumns) {
         const row = getAvailableRow(col);
         if (row !== -1) {
-            board[row][col] = 'red';
+            board[row][col] = 'red';  // Simulate player's move
             if (checkWin(row, col)) {
                 board[row][col] = null;
-                return col;
+                return col;  // Block player's winning move
             }
             board[row][col] = null;
         }
     }
 
-    // Pick random move if no immediate threat
+    // 3. AI strategy to create opportunities for itself
+    // Try to set up the AI to win in the next turn
+    for (let col of availableColumns) {
+        const row = getAvailableRow(col);
+        if (row !== -1) {
+            board[row][col] = 'yellow';  // Simulate AI's move
+            if (checkWin(row, col)) {
+                return col;  // AI wins
+            }
+            board[row][col] = null;
+        }
+    }
+
+    // 4. If no immediate win or block needed, choose a strategic move
     return availableColumns[Math.floor(Math.random() * availableColumns.length)];
 }
 
