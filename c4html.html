@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Four</title>
+    <link rel="stylesheet" href="c4.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Connect Four</h1>
+        <p id="turn">Player 1's Turn (Red)</p>
+        
+        <div id="game-mode">
+            <button onclick="selectGameMode('player')">Play Against Player</button>
+            <button onclick="selectGameMode('ai')">Play Against AI</button>
+        </div>
+
+        <div id="difficulty-level" style="display:none;">
+            <button onclick="setDifficulty('easy')">Easy</button>
+            <button onclick="setDifficulty('medium')">Medium</button>
+            <button onclick="setDifficulty('hard')">Hard</button>
+        </div>
+
+        <div id="board" class="board">
+            <!-- The board grid will be dynamically generated here -->
+        </div>
+
+        <button onclick="restartGame()">Restart Game</button>
+    </div>
+
+    <script src="c4.js"></script>
+</body>
+</html>
