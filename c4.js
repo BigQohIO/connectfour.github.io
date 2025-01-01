@@ -28,7 +28,7 @@ function handleCellClick(event) {
 
     const col = event.target.dataset.col;
     const row = getAvailableRow(col);
-    
+
     if (row !== -1) {
         // Place the disc
         board[row][col] = currentPlayer;
@@ -69,7 +69,7 @@ function updateBoard() {
         const row = cell.dataset.row;
         const col = cell.dataset.col;
         const player = board[row][col];
-        
+
         if (player) {
             cell.classList.add(player);
         } else {
@@ -89,7 +89,7 @@ function checkWin(row, col) {
 // Check a specific direction for a win
 function checkDirection(row, col, rowDir, colDir) {
     let count = 1;
-    
+
     // Check in both directions (positive and negative)
     for (let i = 1; i <= 3; i++) {
         const r = row + i * rowDir;
@@ -116,6 +116,8 @@ function checkDirection(row, col, rowDir, colDir) {
 
 // AI's move (based on difficulty)
 function aiMove() {
+    console.log("AI is thinking...");
+
     // Display "AI is thinking..." message
     document.getElementById('turn').textContent = "AI is thinking...";
 
@@ -145,8 +147,11 @@ function aiMove() {
             aiCol = hardAI(availableColumns);
         }
 
+        // Log AI's decision
+        console.log(`AI chose column ${aiCol}`);
+
         const row = getAvailableRow(aiCol);
-        board[row][aiCol] = 'yellow';  // AI places its piece (yellow)
+        board[row][aiCol] = 'yellow';
         updateBoard();
 
         if (checkWin(row, aiCol)) {
@@ -167,12 +172,12 @@ function mediumAI(availableColumns) {
     for (let col of availableColumns) {
         const row = getAvailableRow(col);
         if (row !== -1) {
-            board[row][col] = 'red';  // Temporarily simulate player move
+            board[row][col] = 'red';
             if (checkWin(row, col)) {
-                board[row][col] = null;  // Undo if it would win for player
+                board[row][col] = null;
                 return col;
             }
-            board[row][col] = null;  // Undo the simulated move
+            board[row][col] = null;
         }
     }
     return availableColumns[Math.floor(Math.random() * availableColumns.length)];
@@ -183,11 +188,11 @@ function hardAI(availableColumns) {
     for (let col of availableColumns) {
         const row = getAvailableRow(col);
         if (row !== -1) {
-            board[row][col] = 'yellow';  // Temporarily simulate AI move
+            board[row][col] = 'yellow';
             if (checkWin(row, col)) {
-                return col;  // AI wins
+                return col;
             }
-            board[row][col] = null;  // Undo if not a winning move
+            board[row][col] = null;
         }
     }
 
@@ -195,16 +200,16 @@ function hardAI(availableColumns) {
     for (let col of availableColumns) {
         const row = getAvailableRow(col);
         if (row !== -1) {
-            board[row][col] = 'red';  // Temporarily simulate player move
+            board[row][col] = 'red';
             if (checkWin(row, col)) {
-                board[row][col] = null;  // Undo
-                return col;  // Block player
+                board[row][col] = null;
+                return col;
             }
-            board[row][col] = null;  // Undo
+            board[row][col] = null;
         }
     }
 
-    // If no immediate threat, pick a random move
+    // Pick random move if no immediate threat
     return availableColumns[Math.floor(Math.random() * availableColumns.length)];
 }
 
@@ -228,3 +233,8 @@ function selectGameMode(mode) {
 function setDifficulty(level) {
     difficulty = level;
     document.getElementById('difficulty-level').style.display = 'none';
+    createBoard();
+}
+
+// Initialize the game
+createBoard();
